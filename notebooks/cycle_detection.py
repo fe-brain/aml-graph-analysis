@@ -5,7 +5,7 @@ import networkx as nx
 script_dir = os.path.dirname(os.path.abspath(__file__))
 data_path = os.path.join(script_dir, "..", "data", "transactions.csv")
 
-transactions = pd.read_csv(data_path, nrows=500000)
+transactions = pd.read_csv(data_path, nrows=2000000)
 
 # bangun graph yang sama kayak sebelumnya
 G = nx.DiGraph()
