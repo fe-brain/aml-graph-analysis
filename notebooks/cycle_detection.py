@@ -51,3 +51,44 @@ total_laundering_accounts = len(laundering_accounts)
 print(f"Total akun: {total_accounts}")
 print(f"Total akun laundering: {total_laundering_accounts}")
 print(f"Base rate akun laundering: {total_laundering_accounts/total_accounts*100:.3f}%")
+
+print()
+print("=== ANALISIS CLUSTER DARI AKUN-AKUN DI CYCLE ===")
+
+# kumpulin semua akun yang pernah muncul di cycle manapun
+accounts_in_cycles = set()
+for c in real_cycles:
+    accounts_in_cycles.update(c)
+
+print(f"Total akun unik yang terlibat di cycle: {len(accounts_in_cycles)}")
+
+# bikin subgraph cuma dari akun-akun ini
+subgraph = G.subgraph(accounts_in_cycles)
+
+# cari connected components (kelompok akun yang saling terhubung)
+clusters = list(nx.weakly_connected_components(subgraph))
+clusters.sort(key=len, reverse=True)
+
+print(f"Jumlah cluster terpisah: {len(clusters)}")
+print()
+print("=== 5 CLUSTER TERBESAR ===")
+for i, cluster in enumerate(clusters[:5]):
+    laundering_in_cluster = sum(1 for acc in cluster if acc in laundering_accounts)
+    print(f"Cluster {i+1}: {len(cluster)} akun, {laundering_in_cluster} di antaranya berlabel laundering")
+    print(f"  Anggota: {list(cluster)}")
+    
+print()
+print("=== DETAIL TRANSAKSI DI CLUSTER 3 (100% LAUNDERING) ===")
+# cari cluster dengan rasio laundering tertinggi, bukan asumsi index tetap
+best_cluster = max(clusters, key=lambda c: sum(1 for acc in c if acc in laundering_accounts) / len(c))
+laundering_count_best = sum(1 for acc in best_cluster if acc in laundering_accounts)
+print(f"Cluster dengan rasio laundering tertinggi: {laundering_count_best}/{len(best_cluster)} akun")
+
+cluster_3_accounts = best_cluster
+
+cluster_transactions = transactions[
+    (transactions["Account"].isin(cluster_3_accounts)) &
+    (transactions["Account.1"].isin(cluster_3_accounts))
+].sort_values("Timestamp")
+
+print(cluster_transactions[["Timestamp", "Account", "Account.1", "Amount Paid", "Is Laundering"]].to_string(index=False))
