@@ -20,7 +20,7 @@ Starting from raw transaction data, this project builds a directed graph of acco
 | Signal | Result | Verdict |
 |---|---|---|
 | High out-degree (volume) | Top sender had 3,421 transactions, only 0.09% flagged as laundering (vs. 0.05% baseline) | Weak signal, volume alone doesn't separate laundering from legitimate high-activity accounts |
-| Pass-through ratio (raw count) | 93% of candidate accounts flagged, signal collapsed under loose thresholds | Too noisy — mirrors real-world "alert fatigue" in poorly tuned transaction monitoring systems |
+| Pass-through ratio (raw count) | 93% of candidate accounts flagged, signal collapsed under loose thresholds | Too noisy, mirrors real-world "alert fatigue" in poorly tuned transaction monitoring systems |
 | Pass-through ratio (refined, min. 5 transactions) | Laundering accounts averaged 0.332 ratio vs. 0.345 for all accounts | No meaningful difference, pass-through alone is not a reliable signal in this dataset |
 | **Cycle detection** | **15.45% of detected cycles contained a laundering account, vs. 0.376% base rate — a ~41x enrichment** | **Strong signal** |
 | **Cluster analysis** | Found a fully-connected 6-account cluster where **100% of accounts were labeled laundering**, forming a complete cycle with funds returning to origin within 4 days | **Strongest signal — a traceable laundering network** |
